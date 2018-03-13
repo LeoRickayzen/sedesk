@@ -1,17 +1,28 @@
 package main
 
 import (
-    "fmt"
-    "html"
-    "log"
     "net/http"
+    "log"
+    "github.com/gorilla/mux"
 )
 
+func homeGetHandler(w http.ResponseWriter, r *http.Request) {
+    w.Write([]byte("home get"))
+}
+
+func homePostHandler(w http.ResponseWriter, r *http.Request) {
+    w.Write([]byte("home post"))
+}
+
 func main() {
-    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
-    })
+    r := mux.NewRouter()
+    
+    //get request
+    r.HandleFunc("/home", homeGetHandler).Methods("GET")
 
-    log.Fatal(http.ListenAndServe(":8080", nil))
+    //post request
+    r.HandleFunc("/home", homePostHandler).Methods("POST")
 
+    // Bind to a port and pass our router in
+    log.Fatal(http.ListenAndServe(":8000", r))
 }
